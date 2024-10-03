@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.slick-dots .slick-active div{
+    border-right: 2px solid #222;
+    color: #222 !important;
+}
+
+@media (min-width: 640px) {
+    .slick-dots{
+        left: 30px !important;
+    }
+}
+
+/* .discount-1{
+    background-image: url(../public/discount1.png);
+} */
