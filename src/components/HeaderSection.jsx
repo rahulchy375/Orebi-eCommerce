@@ -91,7 +91,7 @@ const HeaderSection = () => {
       setSearchValue(searching);
     }
   };
-console.log(searchValue);
+// console.log(searchValue);
 
 
 

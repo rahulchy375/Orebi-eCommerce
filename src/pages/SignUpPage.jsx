@@ -1,13 +1,18 @@
 import React, { useState } from "react";
 import HeadingReuse from "../reuse/HeadingReuse";
 import SignUpReuse from "../reuse/SignUpReuse";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+} from "firebase/auth";
 import { DNA } from "react-loader-spinner";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { getDatabase, push, ref, set } from "firebase/database";
 import { MdRemoveRedEye } from "react-icons/md";
 import { IoEyeOff } from "react-icons/io5";
+import { Link, useNavigate } from "react-router-dom";
 
 const SignUpPage = () => {
   let [firstName, setFirstName] = useState("");
@@ -20,6 +25,7 @@ const SignUpPage = () => {
   let [password, setPassword] = useState("");
   let [conPassword, setConPassword] = useState("");
   let [mail, setMail] = useState("");
+  let navigate = useNavigate();
 
   const handleFirstName = (e) => {
     setFirstName(e.target.value);
@@ -78,7 +84,6 @@ const SignUpPage = () => {
     let mailValidity =
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-      
     // for password validity :
     let digit = /^(?=.*\d)/;
     let lowerCase = /^(?=.*[a-z])/;
@@ -119,19 +124,22 @@ const SignUpPage = () => {
     } else {
       createUserWithEmailAndPassword(auth, mail, password)
         .then((userCredential) => {
+          sendEmailVerification(auth.currentUser).then(() => {
+            set(ref(db, "allUsers/" + userCredential.user.uid), {
+              firstName: firstName,
+              lastName: lastName,
+              email: mail,
+              password: password,
+              phone: phone,
+              street: street,
+              country: country,
+              city: city,
+              postCode: postCode,
+            });
+          });
           toast.success("Sign up successful");
           setLoader(false);
-          set(push(ref(db, "allUsers/")), {
-            firstName: firstName,
-            lastName: lastName,
-            email: mail,
-            password: password,
-            phone: phone,
-            street: street,
-            country: country,
-            city: city,
-            postCode: postCode,
-          });
+          navigate("/login");
           const user = userCredential.user;
         })
         .catch((error) => {
@@ -325,6 +333,8 @@ const SignUpPage = () => {
           </label>
         </div>
 
+        {/* Loader making........ */}
+        
         {loader ? (
           <div className="">
             <DNA
@@ -345,6 +355,14 @@ const SignUpPage = () => {
             Sign Up
           </button>
         )}
+
+        <p>
+          Already have an account?{" "}
+          <Link to="/login">
+            {" "}
+            <u>Login here.</u>
+          </Link>
+        </p>
       </div>
     </section>
   );
