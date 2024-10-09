@@ -16,6 +16,7 @@ const HeaderSection = () => {
   let [catShow, setCatShow] = useState(false);
   let [accShow, setAccShow] = useState(false);
   let [cartShow, setCartShow] = useState(false);
+  let userInfo = useSelector((state) => state.user.value);
   let catRef = useRef();
   let accRef = useRef();
   let cartRef = useRef();
@@ -72,8 +73,13 @@ const HeaderSection = () => {
     setCartShow(false);
   };
   const handleCheckOut = () => {
-    navigate(`/checkout`);
-    setCartShow(false);
+    if (userInfo) {
+      navigate(`/checkout`);
+      setCartShow(false);
+    } else {
+      navigate("/login");
+      setCartShow(false);
+    }
   };
 
   let [searchValue, setSearchValue] = useState([]);
@@ -85,22 +91,17 @@ const HeaderSection = () => {
     } else {
       let searching = apiData.filter((item) =>
         item.title.toLowerCase().includes(e.target.value.toLowerCase())
-      
-      
       );
       setSearchValue(searching);
     }
   };
-// console.log(searchValue);
-
-
+  // console.log(searchValue);
 
   const handleSearchClick = (id) => {
     navigate(`/shop/${id}`);
     setSearchValue("");
     setSearchInputValue("");
   };
-
 
   // ordering with keys:
   let [keySearching, setKeySearching] = useState(-1);
@@ -255,13 +256,20 @@ const HeaderSection = () => {
 
           {accShow && (
             <div className="absolute top-[60px] right-0 z-20">
-              <div className="bg-white py-[10px] px-[20px] hover:bg-[#2B2B2B] hover:text-white font-semibold duration-300 ease-in-out">
-                My Account
-              </div>
-              <div className="bg-white py-[10px] px-[20px] hover:bg-[#2B2B2B] hover:text-white font-semibold duration-300 ease-in-out">
-                <Link to="/login">Log In</Link>
-                
-              </div>
+              {userInfo ? (
+                <>
+                  <div className="bg-white py-[10px] px-[20px] hover:bg-[#2B2B2B] hover:text-white font-semibold duration-300 ease-in-out">
+                    My Account
+                  </div>
+                  <div className="bg-white py-[10px] px-[20px] hover:bg-[#2B2B2B] hover:text-white font-semibold duration-300 ease-in-out">
+                    <Link to="/">Log Out</Link>
+                  </div>
+                </>
+              ) : (
+                <div className="bg-white py-[10px] px-[20px] hover:bg-[#2B2B2B] hover:text-white font-semibold duration-300 ease-in-out">
+                  <Link to="/login">Log In</Link>
+                </div>
+              )}
             </div>
           )}
 

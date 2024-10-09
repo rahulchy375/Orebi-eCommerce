@@ -5,12 +5,22 @@ import { FaPlus } from "react-icons/fa6";
 import { TiMinus, TiTimes } from "react-icons/ti";
 import { useDispatch, useSelector } from "react-redux";
 import { decrement, increment, removeProduct } from "../slice/productSlice";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const CartPage = () => {
   let dispatch = useDispatch();
   let cartDetails = useSelector((cartState) => cartState.product.cartItem);
   // console.log(cartDetails);
+  let userInfo = useSelector((state)=>state.user.value)
+  let navigate = useNavigate()
+
+  const handleCheckOut = () =>{
+    if (userInfo) {
+      navigate("/checkout")
+    } else{
+      navigate("/login")
+    }
+  }
 
   let { subTotal } = cartDetails.reduce(
     (acc, curPrice) => {
@@ -131,8 +141,8 @@ const CartPage = () => {
               </div>
             </div>
           </div>
-          <button className="border border-[#D8D8D8] px-[15px] py-[10px] mt-[20px] font-bold text-[14px] hover:bg-[#262626] hover:text-white duration-300">
-            <Link to="/checkout">Proceed to Checkout</Link> 
+          <button onClick={handleCheckOut} className="border border-[#D8D8D8] px-[15px] py-[10px] mt-[20px] font-bold text-[14px] hover:bg-[#262626] hover:text-white duration-300">
+            Proceed to Checkout 
           </button>
         </div>
       </div>

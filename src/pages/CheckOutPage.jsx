@@ -7,6 +7,10 @@ import axios from "axios";
 
 const CheckOutPage = () => {
   let cartInfo = useSelector((state) => state.product.cartItem);
+  let userInfo = useSelector((state) => state.user.value.user);
+  // console.log(userInfo.email);
+  let userData = useSelector((state) => state.userData.value);
+  console.log(userData);
 
   let { subTotal } = cartInfo.reduce(
     (acc, curPrice) => {
@@ -15,32 +19,6 @@ const CheckOutPage = () => {
     },
     { subTotal: 0 }
   );
-
-  let [country, setCountry] = useState(false);
-  const handleCountry = () => {
-    setCountry(!country);
-  };
-
-  let [countryData, setCountryData] = useState([]);
-  let [countryName, setCountryName] = useState([]);
-
-  let getData = () => {
-    axios
-      .get("https://countriesnow.space/api/v0.1/countries")
-      .then((res) => {
-        setCountryData(res.data.data);
-      });
-  };
-
-  useEffect(() => {
-    setCountryName([...new Set(countryData.map((item) => item.country))]);
-  }, [countryData]);
-
-  useEffect(() => {
-    getData();
-  }, []);
-
-  let [selectedCountry, setSelectedCountry] = useState("");
 
   return (
     <section id="checkOutSection">
@@ -65,6 +43,7 @@ const CheckOutPage = () => {
               id="firstName"
               w="w-[50%]"
               mar="mr-[20px]"
+              value={userData.firstName}
             />
             <CheckOutReuse
               For="lastName"
@@ -72,6 +51,7 @@ const CheckOutPage = () => {
               place="Last Name"
               id="lastName"
               w="w-[50%]"
+              value={userData.lastName}
             />
           </div>
           <div className="">
@@ -86,10 +66,7 @@ const CheckOutPage = () => {
             />
           </div>
           <div className=" border-b border-[#eeeeed] relative">
-            <div
-              className="flex justify-between items-center user-select-none"
-              onClick={handleCountry}
-            >
+            <div className="flex justify-between items-center user-select-none">
               <div className="">
                 <label For="country" className="block font-bold">
                   Country*
@@ -98,33 +75,13 @@ const CheckOutPage = () => {
                   type="text"
                   id="country"
                   placeholder="Please select"
-                  className="bg-[#fff9f9f5] w-full outline-none pb-[5px] cursor-pointer"
+                  className="bg-[#fff9f9f5] w-full outline-none pb-[5px] cursor-default"
                   required
-                  value={selectedCountry}
+                  readOnly
+                  value={userData.country}
                 />
               </div>
-              <div className="">
-                <RiArrowDropDownLine className="mr-[15px] text-[20px]" />
-              </div>
             </div>
-            {country === true ? (
-              <div className="absolute left-0 top-[55px] bg-[#e6e6e6] w-[250px] h-[100px] overflow-y-scroll rounded-[10px] pl-[10px]">
-                {countryName.map((item, i) => (
-                  <div
-                    className="font-semibold cursor-pointer"
-                    key={i}
-                    onClick={(e) => {
-                      setSelectedCountry(item);
-                      setCountry(false);
-                    }}
-                  >
-                    {item}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              ""
-            )}
           </div>
 
           <CheckOutReuse
@@ -132,30 +89,41 @@ const CheckOutPage = () => {
             label="Street Address*"
             place="House number and street name"
             id="street"
+            value={userData.street}
           />
           <CheckOutReuse
             For="town"
             label="Town/City*"
             place="Town/City"
             id="town"
+            value={userData.city}
           />
           <CheckOutReuse
             For="postCode"
             label="Post Code*"
             place="Post Code"
             id="postCode"
+            value={userData.postCode}
           />
-          <CheckOutReuse For="phone" label="Phone*" place="Phone" id="phone" />
+          <CheckOutReuse
+            For="phone"
+            label="Phone*"
+            place="Phone"
+            id="phone"
+            value={userData.phone}
+          />
           <div className="">
             <label For="mail" className="block font-bold">
               Email Address*
             </label>
             <input
               type="email"
+              value={userInfo.email}
               id="mail"
               placeholder="Email Address"
-              className="bg-[#fff9f9f5] w-full outline-none pb-[5px] border-b border-[#eeeeed]"
+              className="bg-[#fff9f9f5] cursor-default w-full outline-none pb-[5px] border-b border-[#eeeeed]"
               required
+              readOnly
             />
           </div>
         </div>

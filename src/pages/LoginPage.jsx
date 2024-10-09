@@ -4,13 +4,18 @@ import { IoEye, IoEyeOff } from "react-icons/io5";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getDatabase, ref, child, get } from "firebase/database";
 import { DNA } from "react-loader-spinner";
+import { useDispatch } from "react-redux";
+import { userInfo } from "../slice/loginSlice";
+import { userData } from "../slice/userDataSlice";
 
 const LoginPage = () => {
   let [showPass, setShowPass] = useState(false);
   let [mail, setMail] = useState("");
   let [password, setPassword] = useState("");
   let [loader, setLoader] = useState(false);
+  let dispatch = useDispatch();
   let navigate = useNavigate();
   const auth = getAuth();
   const handlePassword = () => {
@@ -25,13 +30,13 @@ const LoginPage = () => {
   };
 
   const handleLogin = () => {
-    setLoader(true)
+    setLoader(true);
     if (!mail) {
       toast.error("Please Enter Email");
-      setLoader(false)
+      setLoader(false);
     } else if (!password) {
       toast.error("Please Enter Password");
-      setLoader(false)
+      setLoader(false);
     } else {
       signInWithEmailAndPassword(auth, mail, password)
         .then((userCredential) => {
@@ -42,6 +47,24 @@ const LoginPage = () => {
             toast.success("Login Successful");
             navigate("/");
             setLoader(false);
+            dispatch(userInfo(userCredential));
+            localStorage.setItem("user", JSON.stringify(userCredential));
+            console.log(userCredential.user.uid);
+            
+            const dbRef = ref(getDatabase());
+            get(child(dbRef, `allUsers/${userCredential.user.uid}`))
+              .then((snapshot) => {
+                if (snapshot.exists()) {
+                  console.log(snapshot.val());
+                  dispatch(userData(snapshot.val()))
+                  localStorage.setItem("userData", JSON.stringify(snapshot.val()))
+                } else {
+                  console.log("No data available");
+                }
+              })
+              .catch((error) => {
+                console.error(error);
+              });
           }
         })
         .catch((error) => {

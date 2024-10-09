@@ -98,8 +98,8 @@ const NewArriSection = () => {
       <div className="container mx-auto px-[20px] sm:px-0">
         <h2 className="mb-[35px] text-[30px] font-bold">New Arrivals</h2>
         <Slider {...settings}>
-          {apiData.map((item) => (
-            <div className="flex gap-2" key={item.id}>
+          {apiData.map((item,i) => (
+            <div className="flex gap-2" key={i}>
               <div className="mx-[10px]" id={item.id}>
                 <div className="group relative flex justify-center items-center shadow">
                   <Link to={`/shop/${item.id}`}>

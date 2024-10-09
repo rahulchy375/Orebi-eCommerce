@@ -334,7 +334,7 @@ const SignUpPage = () => {
         </div>
 
         {/* Loader making........ */}
-        
+
         {loader ? (
           <div className="">
             <DNA
