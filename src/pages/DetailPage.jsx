@@ -11,7 +11,7 @@ import { addToCart } from "../slice/productSlice";
 
 const DetailPage = () => {
   let productID = useParams();
-  // console.log(productID.id);
+  // console.log(productID);
 
   let [singleProduct, setSingleProduct] = useState([]);
 
